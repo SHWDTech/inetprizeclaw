@@ -1,7 +1,8 @@
-package android.prizeclaw.shwdtech.inetprizeclaw;
+package android.prizeclaw.shwdtech.inetprizeclaw.activity;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.prizeclaw.shwdtech.inetprizeclaw.R;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
