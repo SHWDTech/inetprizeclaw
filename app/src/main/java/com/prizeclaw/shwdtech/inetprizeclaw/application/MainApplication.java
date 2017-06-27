@@ -1,4 +1,4 @@
-package android.prizeclaw.shwdtech.inetprizeclaw.application;
+package com.prizeclaw.shwdtech.inetprizeclaw.application;
 
 import android.app.Application;
 

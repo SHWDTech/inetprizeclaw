@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -41,20 +42,21 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btnUp"
+                    android:id="@+id/btnForward"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="上" />
+                    android:text="前"
+                    tools:ignore="ButtonStyle" />
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btnBackup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    android:text="后"
+                    tools:ignore="ButtonStyle" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -62,21 +64,22 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button4"
+                    android:id="@+id/btnLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    tools:ignore="ButtonStyle"
+                    android:text="左" />
 
                 <Button
-                    android:id="@+id/button5"
+                    android:id="@+id/btnRight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    tools:ignore="ButtonStyle"
+                    android:text="右" />
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
 
 </FrameLayout>

@@ -1,6 +1,6 @@
-package android.prizeclaw.shwdtech.inetprizeclaw.http;
+package com.prizeclaw.shwdtech.inetprizeclaw.http;
 
-import android.prizeclaw.shwdtech.inetprizeclaw.bean.AccessTokenBean;
+import com.prizeclaw.shwdtech.inetprizeclaw.bean.AccessTokenBean;
 
 import com.google.gson.Gson;
 

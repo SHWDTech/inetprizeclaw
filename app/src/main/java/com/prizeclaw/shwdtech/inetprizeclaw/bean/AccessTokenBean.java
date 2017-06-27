@@ -1,4 +1,4 @@
-package android.prizeclaw.shwdtech.inetprizeclaw.bean;
+package com.prizeclaw.shwdtech.inetprizeclaw.bean;
 
 /**
  * Created by autyan on 6/27/2017.

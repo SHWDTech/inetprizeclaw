@@ -1,4 +1,4 @@
-package android.prizeclaw.shwdtech.inetprizeclaw.http;
+package com.prizeclaw.shwdtech.inetprizeclaw.http;
 
 import android.support.annotation.NonNull;
 import android.util.Log;

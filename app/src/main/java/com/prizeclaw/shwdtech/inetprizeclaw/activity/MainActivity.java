@@ -1,18 +1,20 @@
-package android.prizeclaw.shwdtech.inetprizeclaw.activity;
+package com.prizeclaw.shwdtech.inetprizeclaw.activity;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.prizeclaw.shwdtech.inetprizeclaw.R;
-import android.prizeclaw.shwdtech.inetprizeclaw.bean.AccessTokenBean;
-import android.prizeclaw.shwdtech.inetprizeclaw.http.HttpManager;
-import android.prizeclaw.shwdtech.inetprizeclaw.http.JSONUtils;
-import android.prizeclaw.shwdtech.inetprizeclaw.http.XHttpResponse;
+
+import com.prizeclaw.shwdtech.inetprizeclaw.R;
+import com.prizeclaw.shwdtech.inetprizeclaw.bean.AccessTokenBean;
+import com.prizeclaw.shwdtech.inetprizeclaw.http.HttpManager;
+import com.prizeclaw.shwdtech.inetprizeclaw.http.JSONUtils;
+import com.prizeclaw.shwdtech.inetprizeclaw.http.XHttpResponse;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.videogo.exception.BaseException;
@@ -21,6 +23,10 @@ import com.videogo.openapi.EZPlayer;
 import com.videogo.openapi.bean.EZDeviceInfo;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback{
 
@@ -42,6 +48,46 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     private LinearLayout.LayoutParams mFillLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
+    private boolean _isRightOpen = false;
+
+    @BindView(R.id.btnForward) Button btnForward;
+
+    @BindView(R.id.btnBackup) Button btnBackup;
+
+    @BindView(R.id.btnLeft) Button btnLeft;
+
+    @BindView(R.id.btnRight) Button btnRight;
+
+    @OnClick(R.id.btnForward) void Forward(){
+        _isRightOpen = true;
+        ChangeSuraceLayout(_isRightOpen);
+    }
+
+    @OnClick(R.id.btnBackup) void Backup(){
+        _isRightOpen = true;
+        ChangeSuraceLayout(_isRightOpen);
+    }
+
+    @OnClick(R.id.btnLeft) void Left(){
+        _isRightOpen = false;
+        ChangeSuraceLayout(_isRightOpen);
+    }
+
+    @OnClick(R.id.btnRight) void Right(){
+        _isRightOpen = false;
+        ChangeSuraceLayout(_isRightOpen);
+    }
+
+    private void ChangeSuraceLayout(boolean isRight){
+        if(isRight){
+            mSurfaceRight.setLayoutParams(mFillLayoutParams);
+            mSurfaceLeft.setLayoutParams(m1pxLayoutParams);
+        }else{
+            mSurfaceRight.setLayoutParams(m1pxLayoutParams);
+            mSurfaceLeft.setLayoutParams(mFillLayoutParams);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +106,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                             | View.SYSTEM_UI_FLAG_IMMERSIVE);
         }
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
+        mSurfaceLeft = (SurfaceView)findViewById(R.id.surfaceViewLeft);
         mSurfaceHolderRight = mSurfaceRight.getHolder();
         mSurfaceHolderRight.addCallback(this);
     }
