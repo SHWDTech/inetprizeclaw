@@ -4,6 +4,7 @@ package android.prizeclaw.shwdtech.inetprizeclaw.http;
  * Created by bb on 16/9/11.
  */
 public class HttpConStants {
+    static String OPENYSHost = "https://open.ys7.com/api/lapp/token/get";
     static String HOST = "http://dust.shweidong.com/app";
     public static String TEST_HOST = "http://114.55.175.99:8090";
 

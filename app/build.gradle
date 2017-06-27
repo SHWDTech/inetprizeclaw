@@ -6,10 +6,18 @@ android {
     defaultConfig {
         applicationId "android.prizeclaw.shwdtech.inetprizeclaw"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 22
+        ndk {
+            abiFilters "armeabi-v7a"//只支持32位
+        }
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
     }
     buildTypes {
         release {
@@ -34,4 +42,5 @@ dependencies {
     compile files('libs/jna.jar')
     compile files('libs/AudioEngineSDK.jar')
     compile files('libs/PlayerSDK.jar')
+    compile 'com.hikvision.ezviz:ezviz-sdk:4.5.0'
 }

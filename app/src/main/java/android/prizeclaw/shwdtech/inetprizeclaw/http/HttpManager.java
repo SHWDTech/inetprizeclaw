@@ -443,4 +443,34 @@ public class HttpManager {
             }
         });
     }
+
+    public static void getAccessToken(@NonNull final XHttpResponse response){
+        Log.d(TAG, "start getAccessToken");
+        RequestParams requestParams = new RequestParams(HttpConStants.OPENYSHost);
+        requestParams.addBodyParameter("appKey", "9f88209c239d4bf28156d3f880bb8321");
+        requestParams.addBodyParameter("appSecret", "f013a79dd3c9966123fd408be34c557e");
+        x.http().get(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.d(TAG, "getUpdateData onSuccess -->" + result);
+                response.onResponse(result);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d(TAG, "getUpdateData onError  -->" + ex.toString());
+                response.onError(ex);
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
 }

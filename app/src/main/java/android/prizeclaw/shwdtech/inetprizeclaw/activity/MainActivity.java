@@ -3,11 +3,37 @@ package android.prizeclaw.shwdtech.inetprizeclaw.activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.prizeclaw.shwdtech.inetprizeclaw.R;
+import android.prizeclaw.shwdtech.inetprizeclaw.bean.AccessTokenBean;
+import android.prizeclaw.shwdtech.inetprizeclaw.http.HttpManager;
+import android.prizeclaw.shwdtech.inetprizeclaw.http.JSONUtils;
+import android.prizeclaw.shwdtech.inetprizeclaw.http.XHttpResponse;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 
-public class MainActivity extends AppCompatActivity {
+import com.videogo.exception.BaseException;
+import com.videogo.openapi.EZOpenSDK;
+import com.videogo.openapi.EZPlayer;
+import com.videogo.openapi.bean.EZDeviceInfo;
+
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback{
+
+    private EZOpenSDK mEZOpenSDK;
+
+    private EZPlayer ezPlayer;
+
+    private SurfaceView mSurfaceLeft;
+
+    private SurfaceView mSurfaceRight;
+
+    private List<EZDeviceInfo> mEZDeviceInfos;
+
+    private AccessTokenBean token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,5 +53,48 @@ public class MainActivity extends AppCompatActivity {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE);
         }
         setContentView(R.layout.activity_main);
+
+        mEZOpenSDK = EZOpenSDK.getInstance();
+        HttpManager.getAccessToken(new XHttpResponse() {
+            @Override
+            public void onResponse(String response) {
+                token = JSONUtils.parseAccesstokenBean(response);
+                mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                try {
+                    mEZDeviceInfos = mEZOpenSDK.getDeviceList(0, 200);
+                } catch (BaseException e) {
+                    e.printStackTrace();
+                }
+                EZDeviceInfo info = mEZDeviceInfos.get(0);
+                int camNum = info.getCameraNum();
+                String serial = info.getDeviceSerial();
+                ezPlayer = mEZOpenSDK.createPlayer(serial, camNum);
+                mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
+                ezPlayer.setSurfaceHold(mSurfaceRight.getHolder());
+                Boolean ret = ezPlayer.startRealPlay();
+                Log.i("TAG", ret.toString());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder surfaceHolder) {
+
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+
     }
 }

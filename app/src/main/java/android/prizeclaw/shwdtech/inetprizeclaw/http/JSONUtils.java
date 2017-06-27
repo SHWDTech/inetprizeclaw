@@ -1,12 +1,8 @@
 package android.prizeclaw.shwdtech.inetprizeclaw.http;
 
-import android.text.TextUtils;
+import android.prizeclaw.shwdtech.inetprizeclaw.bean.AccessTokenBean;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import com.google.gson.Gson;
 
 /**
  * Created by bb on 16/9/12.
@@ -38,4 +34,8 @@ public class JSONUtils {
 
         return data;
     }*/
+
+public static AccessTokenBean parseAccesstokenBean(String json){
+    return new Gson().fromJson(json, AccessTokenBean.class);
+}
 }
