@@ -13,6 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 import com.videogo.exception.BaseException;
 import com.videogo.openapi.EZOpenSDK;
@@ -31,9 +32,15 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     private SurfaceView mSurfaceRight;
 
+    private SurfaceHolder mSurfaceHolderRight;
+
     private List<EZDeviceInfo> mEZDeviceInfos;
 
     private AccessTokenBean token;
+
+    private LinearLayout.LayoutParams m1pxLayoutParams = new LinearLayout.LayoutParams(1, LinearLayout.LayoutParams.MATCH_PARENT);
+
+    private LinearLayout.LayoutParams mFillLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +60,13 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                             | View.SYSTEM_UI_FLAG_IMMERSIVE);
         }
         setContentView(R.layout.activity_main);
+        mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
+        mSurfaceHolderRight = mSurfaceRight.getHolder();
+        mSurfaceHolderRight.addCallback(this);
+    }
 
+    @Override
+    public void surfaceCreated(SurfaceHolder surfaceHolder) {
         mEZOpenSDK = EZOpenSDK.getInstance();
         HttpManager.getAccessToken(new XHttpResponse() {
             @Override
@@ -64,15 +77,14 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                     @Override
                     public void run() {
                         try {
-                            final EZDeviceInfo  info = mEZOpenSDK.getDeviceInfo("577070480");
+                            final EZDeviceInfo  info = mEZOpenSDK.getDeviceInfo("779567540");
                             runOnUiThread(new Runnable(){
                                 @Override
                                 public void run(){
                                     int camNum = info.getCameraNum();
                                     String serial = info.getDeviceSerial();
                                     ezPlayer = mEZOpenSDK.createPlayer(serial, camNum);
-                                    mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
-                                    ezPlayer.setSurfaceHold(mSurfaceRight.getHolder());
+                                    ezPlayer.setSurfaceHold(mSurfaceHolderRight);
                                     Boolean ret = ezPlayer.startRealPlay();
                                     Log.i("TAG", ret.toString());
                                 }
@@ -90,11 +102,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
             }
         });
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
     }
 
     @Override
