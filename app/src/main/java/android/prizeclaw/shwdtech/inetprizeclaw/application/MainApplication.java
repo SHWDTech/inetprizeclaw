@@ -15,6 +15,7 @@ public class MainApplication extends Application {
     public void onCreate(){
         super.onCreate();
         x.Ext.init(this);
+        EZOpenSDK.showSDKLog(true);
         EZOpenSDK.initLib(this, "9f88209c239d4bf28156d3f880bb8321", "");
     }
 }

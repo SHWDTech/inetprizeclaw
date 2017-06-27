@@ -60,19 +60,29 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             public void onResponse(String response) {
                 token = JSONUtils.parseAccesstokenBean(response);
                 mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
-                try {
-                    mEZDeviceInfos = mEZOpenSDK.getDeviceList(0, 200);
-                } catch (BaseException e) {
-                    e.printStackTrace();
-                }
-                EZDeviceInfo info = mEZDeviceInfos.get(0);
-                int camNum = info.getCameraNum();
-                String serial = info.getDeviceSerial();
-                ezPlayer = mEZOpenSDK.createPlayer(serial, camNum);
-                mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
-                ezPlayer.setSurfaceHold(mSurfaceRight.getHolder());
-                Boolean ret = ezPlayer.startRealPlay();
-                Log.i("TAG", ret.toString());
+                new Thread(new Runnable(){
+                    @Override
+                    public void run() {
+                        try {
+                            final EZDeviceInfo  info = mEZOpenSDK.getDeviceInfo("577070480");
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run(){
+                                    int camNum = info.getCameraNum();
+                                    String serial = info.getDeviceSerial();
+                                    ezPlayer = mEZOpenSDK.createPlayer(serial, camNum);
+                                    mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
+                                    ezPlayer.setSurfaceHold(mSurfaceRight.getHolder());
+                                    Boolean ret = ezPlayer.startRealPlay();
+                                    Log.i("TAG", ret.toString());
+                                }
+                            });
+                        } catch (BaseException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }).start();
             }
 
             @Override
@@ -80,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
             }
         });
-
     }
 
     @Override

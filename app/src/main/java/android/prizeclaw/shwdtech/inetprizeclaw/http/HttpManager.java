@@ -449,7 +449,7 @@ public class HttpManager {
         RequestParams requestParams = new RequestParams(HttpConStants.OPENYSHost);
         requestParams.addBodyParameter("appKey", "9f88209c239d4bf28156d3f880bb8321");
         requestParams.addBodyParameter("appSecret", "f013a79dd3c9966123fd408be34c557e");
-        x.http().get(requestParams, new Callback.CommonCallback<String>() {
+        x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Log.d(TAG, "getUpdateData onSuccess -->" + result);
