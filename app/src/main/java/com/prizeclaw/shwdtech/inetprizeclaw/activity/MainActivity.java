@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     private EZOpenSDK mEZOpenSDK;
 
-    private EZPlayer ezPlayer;
+    private EZPlayer ezPlayerRight;
+
+    private EZPlayer ezPlayerLeft;
 
     private SurfaceView mSurfaceLeft;
 
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     private SurfaceHolder mSurfaceHolderRight;
 
-    private List<EZDeviceInfo> mEZDeviceInfos;
+    private SurfaceHolder mSurfaceHolderLeft;
 
     private AccessTokenBean token;
 
@@ -107,42 +109,12 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
-        mSurfaceLeft = (SurfaceView)findViewById(R.id.surfaceViewLeft);
-        mSurfaceHolderRight = mSurfaceRight.getHolder();
-        mSurfaceHolderRight.addCallback(this);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
         mEZOpenSDK = EZOpenSDK.getInstance();
         HttpManager.getAccessToken(new XHttpResponse() {
             @Override
             public void onResponse(String response) {
                 token = JSONUtils.parseAccesstokenBean(response);
                 mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
-                new Thread(new Runnable(){
-                    @Override
-                    public void run() {
-                        try {
-                            final EZDeviceInfo  info = mEZOpenSDK.getDeviceInfo("779567540");
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    int camNum = info.getCameraNum();
-                                    String serial = info.getDeviceSerial();
-                                    ezPlayer = mEZOpenSDK.createPlayer(serial, camNum);
-                                    ezPlayer.setSurfaceHold(mSurfaceHolderRight);
-                                    Boolean ret = ezPlayer.startRealPlay();
-                                    Log.i("TAG", ret.toString());
-                                }
-                            });
-                        } catch (BaseException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }).start();
             }
 
             @Override
@@ -150,6 +122,63 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
             }
         });
+        mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
+        mSurfaceLeft = (SurfaceView)findViewById(R.id.surfaceViewLeft);
+        mSurfaceHolderRight = mSurfaceRight.getHolder();
+        mSurfaceHolderLeft = mSurfaceLeft.getHolder();
+        mSurfaceHolderRight.addCallback(this);
+        mSurfaceHolderLeft.addCallback(this);
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder surfaceHolder) {
+        if(surfaceHolder == mSurfaceHolderRight){
+            new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    try {
+                        final EZDeviceInfo info = mEZOpenSDK.getDeviceInfo("779567540");
+                        runOnUiThread(new Runnable(){
+                            @Override
+                            public void run(){
+                                int camNum = info.getCameraNum();
+                                String serial = info.getDeviceSerial();
+                                ezPlayerRight = mEZOpenSDK.createPlayer(serial, camNum);
+                                ezPlayerRight.setSurfaceHold(mSurfaceHolderRight);
+                                Boolean ret = ezPlayerRight.startRealPlay();
+                                Log.i("TAG", ret.toString());
+                            }
+                        });
+                    } catch (BaseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+        }else if(surfaceHolder == mSurfaceHolderLeft){
+            new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    try {
+                        final EZDeviceInfo info = mEZOpenSDK.getDeviceInfo("779567543");
+                        runOnUiThread(new Runnable(){
+                            @Override
+                            public void run(){
+                                int camNum = info.getCameraNum();
+                                String serial = info.getDeviceSerial();
+                                ezPlayerLeft = mEZOpenSDK.createPlayer(serial, camNum);
+                                ezPlayerLeft.setSurfaceHold(mSurfaceHolderLeft);
+                                Boolean ret = ezPlayerLeft.startRealPlay();
+                                Log.i("TAG", ret.toString());
+                            }
+                        });
+                    } catch (BaseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+        }
     }
 
     @Override
