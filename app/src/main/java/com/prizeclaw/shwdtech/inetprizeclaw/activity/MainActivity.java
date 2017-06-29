@@ -10,6 +10,7 @@ import com.prizeclaw.shwdtech.inetprizeclaw.http.JSONUtils;
 import com.prizeclaw.shwdtech.inetprizeclaw.http.XHttpResponse;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -27,6 +28,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback{
 
@@ -60,24 +62,153 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     @BindView(R.id.btnRight) Button btnRight;
 
-    @OnClick(R.id.btnForward) void Forward(){
-        _isRightOpen = true;
-        ChangeSuraceLayout(_isRightOpen);
+    @BindView(R.id.btnCatch) Button btnCatch;
+
+    @OnTouch(R.id.btnForward) void Forward(View v, MotionEvent event){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            _isRightOpen = true;
+            ChangeSuraceLayout(_isRightOpen);
+            HttpManager.postControlCommand(new XHttpResponse() {
+                @Override
+                public void onResponse(String response) {
+                    token = JSONUtils.parseAccesstokenBean(response);
+                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            }, "00000001", 0);
+        }
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            HttpManager.postControlCommand(new XHttpResponse() {
+                @Override
+                public void onResponse(String response) {
+                    token = JSONUtils.parseAccesstokenBean(response);
+                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            }, "00000001", 5);
+        }
     }
 
-    @OnClick(R.id.btnBackup) void Backup(){
-        _isRightOpen = true;
-        ChangeSuraceLayout(_isRightOpen);
+    @OnTouch(R.id.btnBackup) void Backup(View v, MotionEvent event){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            _isRightOpen = true;
+            ChangeSuraceLayout(_isRightOpen);
+            HttpManager.postControlCommand(new XHttpResponse() {
+                @Override
+                public void onResponse(String response) {
+                    token = JSONUtils.parseAccesstokenBean(response);
+                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            }, "00000001", 1);
+        }
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            HttpManager.postControlCommand(new XHttpResponse() {
+                @Override
+                public void onResponse(String response) {
+                    token = JSONUtils.parseAccesstokenBean(response);
+                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            }, "00000001", 5);
+        }
     }
 
-    @OnClick(R.id.btnLeft) void Left(){
-        _isRightOpen = false;
-        ChangeSuraceLayout(_isRightOpen);
+    @OnTouch(R.id.btnLeft) void Left(View v, MotionEvent event){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            _isRightOpen = false;
+            ChangeSuraceLayout(_isRightOpen);
+            HttpManager.postControlCommand(new XHttpResponse() {
+                @Override
+                public void onResponse(String response) {
+                    token = JSONUtils.parseAccesstokenBean(response);
+                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            }, "00000001", 2);
+        }
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            HttpManager.postControlCommand(new XHttpResponse() {
+                @Override
+                public void onResponse(String response) {
+                    token = JSONUtils.parseAccesstokenBean(response);
+                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            }, "00000001", 5);
+        }
     }
 
-    @OnClick(R.id.btnRight) void Right(){
-        _isRightOpen = false;
-        ChangeSuraceLayout(_isRightOpen);
+    @OnTouch(R.id.btnRight) void Right(View v, MotionEvent event){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            _isRightOpen = false;
+            ChangeSuraceLayout(_isRightOpen);
+            HttpManager.postControlCommand(new XHttpResponse() {
+                @Override
+                public void onResponse(String response) {
+                    token = JSONUtils.parseAccesstokenBean(response);
+                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            }, "00000001", 3);
+        }
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            HttpManager.postControlCommand(new XHttpResponse() {
+                @Override
+                public void onResponse(String response) {
+                    token = JSONUtils.parseAccesstokenBean(response);
+                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            }, "00000001", 5);
+        }
+    }
+
+    @OnClick(R.id.btnCatch) void Catch(){
+        HttpManager.postControlCommand(new XHttpResponse() {
+            @Override
+            public void onResponse(String response) {
+                token = JSONUtils.parseAccesstokenBean(response);
+                mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        }, "00000001", 4);
     }
 
     private void ChangeSuraceLayout(boolean isRight){
