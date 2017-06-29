@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     @BindView(R.id.btnCatch) Button btnCatch;
 
-    @OnTouch(R.id.btnForward) void Forward(View v, MotionEvent event){
+    @OnTouch(R.id.btnForward) boolean Forward(View v, MotionEvent event){
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             _isRightOpen = true;
             ChangeSuraceLayout(_isRightOpen);
@@ -95,9 +95,11 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 }
             }, "00000001", 5);
         }
+
+        return true;
     }
 
-    @OnTouch(R.id.btnBackup) void Backup(View v, MotionEvent event){
+    @OnTouch(R.id.btnBackup) boolean Backup(View v, MotionEvent event){
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             _isRightOpen = true;
             ChangeSuraceLayout(_isRightOpen);
@@ -128,9 +130,10 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 }
             }, "00000001", 5);
         }
+        return true;
     }
 
-    @OnTouch(R.id.btnLeft) void Left(View v, MotionEvent event){
+    @OnTouch(R.id.btnLeft) boolean Left(View v, MotionEvent event){
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             _isRightOpen = false;
             ChangeSuraceLayout(_isRightOpen);
@@ -161,9 +164,10 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 }
             }, "00000001", 5);
         }
+        return true;
     }
 
-    @OnTouch(R.id.btnRight) void Right(View v, MotionEvent event){
+    @OnTouch(R.id.btnRight) boolean Right(View v, MotionEvent event){
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             _isRightOpen = false;
             ChangeSuraceLayout(_isRightOpen);
@@ -194,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 }
             }, "00000001", 5);
         }
+        return true;
     }
 
     @OnClick(R.id.btnCatch) void Catch(){
