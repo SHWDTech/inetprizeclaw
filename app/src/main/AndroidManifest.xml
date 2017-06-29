@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.prizeclaw.shwdtech.inetprizeclaw">
-
     <application
         android:name=".application.MainApplication"
         android:allowBackup="true"
@@ -29,12 +28,4 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
-    <receiver
-        android:name="PrizeClaw_BroadcastReceiver"
-        android:exported="false" >
-        <intent-filter>
-            <action android:name="com.videogo.action.OAUTH_SUCCESS_ACTION" />
-            <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-        </intent-filter>
-    </receiver>
 </manifest>
