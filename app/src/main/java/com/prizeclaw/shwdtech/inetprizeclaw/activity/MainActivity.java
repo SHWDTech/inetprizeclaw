@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout.LayoutParams mFillLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
     private boolean _isRightOpen = false;
+    private Button _onHoldButton;
 
     @BindView(R.id.surfaceViewLeft)
     SurfaceView mSurfaceLeft;
@@ -82,7 +83,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnForward)
     boolean Forward(View v, MotionEvent event) {
+        if(_onHoldButton != null && _onHoldButton != btnForward) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            _onHoldButton = btnForward;
             _isRightOpen = true;
             ChangeSurfaceLayout(_isRightOpen);
             HttpManager.postControlCommand(new XHttpResponse() {
@@ -97,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
             }, "00000001", 0);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            _onHoldButton = null;
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
@@ -114,7 +118,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnBackup)
     boolean Backup(View v, MotionEvent event) {
+        if(_onHoldButton != null && _onHoldButton != btnBackup) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            _onHoldButton = btnBackup;
             _isRightOpen = true;
             ChangeSurfaceLayout(_isRightOpen);
             HttpManager.postControlCommand(new XHttpResponse() {
@@ -129,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
             }, "00000001", 1);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            _onHoldButton = null;
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
@@ -145,7 +152,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnLeft)
     boolean Left(View v, MotionEvent event) {
+        if(_onHoldButton != null && _onHoldButton != btnLeft) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            _onHoldButton = btnLeft;
             _isRightOpen = false;
             ChangeSurfaceLayout(_isRightOpen);
             HttpManager.postControlCommand(new XHttpResponse() {
@@ -160,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
             }, "00000001", 2);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            _onHoldButton = null;
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
@@ -176,7 +186,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnRight)
     boolean Right(View v, MotionEvent event) {
+        if(_onHoldButton != null && _onHoldButton != btnRight) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            _onHoldButton = btnRight;
             _isRightOpen = false;
             ChangeSurfaceLayout(_isRightOpen);
             HttpManager.postControlCommand(new XHttpResponse() {
@@ -191,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
             }, "00000001", 3);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            _onHoldButton = null;
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
@@ -205,18 +218,26 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @OnClick(R.id.btnCatch)
-    void Catch() {
-        HttpManager.postControlCommand(new XHttpResponse() {
-            @Override
-            public void onResponse(String response) {
-            }
+    @OnTouch(R.id.btnCatch)
+    boolean Catch(View v, MotionEvent event) {
+        if(_onHoldButton != null && _onHoldButton != btnCatch) return true;
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            _onHoldButton = btnCatch;
+            HttpManager.postControlCommand(new XHttpResponse() {
+                @Override
+                public void onResponse(String response) {
+                }
 
-            @Override
-            public void onError(Throwable e) {
+                @Override
+                public void onError(Throwable e) {
 
-            }
-        }, "00000001", 4);
+                }
+            }, "00000001", 4);
+        }
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            _onHoldButton = null;
+        }
+        return true;
     }
 
     private void ChangeSurfaceLayout(boolean isRight) {
@@ -313,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @return 是否有效
      */
-    private boolean checkLocalAccessTokenValid() {
+    private boolean  checkLocalAccessTokenValid() {
         SharedPreferences sp = getSharedPreferences(ACCESS_TOKEN_SP, Context.MODE_PRIVATE);
         String tokenExpireDate = sp.getString(TOKEN_EXPIRE_DATE_KEY, "2000-01-01 00:00:00 000");
         SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz");
