@@ -18,11 +18,13 @@
             android:orientation="horizontal">
 
             <SurfaceView
+                android:keepScreenOn="true"
                 android:id="@+id/surfaceViewLeft"
                 android:layout_width="1dp"
                 android:layout_height="match_parent" />
 
             <SurfaceView
+                android:keepScreenOn="true"
                 android:id="@+id/surfaceViewRight"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
