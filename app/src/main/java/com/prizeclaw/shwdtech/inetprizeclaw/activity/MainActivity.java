@@ -1,9 +1,11 @@
 package com.prizeclaw.shwdtech.inetprizeclaw.activity;
 
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
 import com.prizeclaw.shwdtech.inetprizeclaw.R;
+import com.prizeclaw.shwdtech.inetprizeclaw.application.MainApplication;
 import com.prizeclaw.shwdtech.inetprizeclaw.bean.AccessTokenBean;
 import com.prizeclaw.shwdtech.inetprizeclaw.http.HttpManager;
 import com.prizeclaw.shwdtech.inetprizeclaw.http.JSONUtils;
@@ -23,6 +25,9 @@ import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EZPlayer;
 import com.videogo.openapi.bean.EZDeviceInfo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -45,8 +50,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     private SurfaceHolder mSurfaceHolderRight;
 
     private SurfaceHolder mSurfaceHolderLeft;
-
-    private AccessTokenBean token;
 
     private LinearLayout.LayoutParams m1pxLayoutParams = new LinearLayout.LayoutParams(1, LinearLayout.LayoutParams.MATCH_PARENT);
 
@@ -71,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
-                    token = JSONUtils.parseAccesstokenBean(response);
-                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
                 }
 
                 @Override
@@ -85,8 +86,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
-                    token = JSONUtils.parseAccesstokenBean(response);
-                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
                 }
 
                 @Override
@@ -106,8 +105,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
-                    token = JSONUtils.parseAccesstokenBean(response);
-                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
                 }
 
                 @Override
@@ -120,8 +117,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
-                    token = JSONUtils.parseAccesstokenBean(response);
-                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
                 }
 
                 @Override
@@ -140,8 +135,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
-                    token = JSONUtils.parseAccesstokenBean(response);
-                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
                 }
 
                 @Override
@@ -154,8 +147,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
-                    token = JSONUtils.parseAccesstokenBean(response);
-                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
                 }
 
                 @Override
@@ -174,8 +165,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
-                    token = JSONUtils.parseAccesstokenBean(response);
-                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
                 }
 
                 @Override
@@ -188,8 +177,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
                 public void onResponse(String response) {
-                    token = JSONUtils.parseAccesstokenBean(response);
-                    mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
                 }
 
                 @Override
@@ -205,8 +192,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         HttpManager.postControlCommand(new XHttpResponse() {
             @Override
             public void onResponse(String response) {
-                token = JSONUtils.parseAccesstokenBean(response);
-                mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
             }
 
             @Override
@@ -245,12 +230,41 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mEZOpenSDK = EZOpenSDK.getInstance();
+        mEZOpenSDK = MainApplication.getApplicationEZOpenSDK();
+        SharedPreferences settings = getPreferences(0);
+        String tokenExpireDate = settings.getString("TokenExpireDate", "2000-01-01 00:00:00 000");
+        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz");
+        try {
+            Date date = parser.parse(tokenExpireDate);
+            if(date.before(new Date())){
+                FatchAccessToken();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            FatchAccessToken();
+        }
+
+        mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
+        mSurfaceLeft = (SurfaceView)findViewById(R.id.surfaceViewLeft);
+        mSurfaceHolderRight = mSurfaceRight.getHolder();
+        mSurfaceHolderLeft = mSurfaceLeft.getHolder();
+        mSurfaceHolderRight.addCallback(this);
+        mSurfaceHolderLeft.addCallback(this);
+    }
+
+    private void FatchAccessToken(){
         HttpManager.getAccessToken(new XHttpResponse() {
             @Override
             public void onResponse(String response) {
-                token = JSONUtils.parseAccesstokenBean(response);
+                AccessTokenBean token = JSONUtils.parseAccesstokenBean(response);
                 mEZOpenSDK.setAccessToken(token.getData().getAccessToken());
+                Date expireDate = new Date(Long.parseLong(token.getData().getExpireTime()));
+                SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz");
+                String expireDateStr = parser.format(expireDate);
+                SharedPreferences settings = getPreferences(0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("TokenExpireDate", expireDateStr);
+                editor.commit();
             }
 
             @Override
@@ -258,12 +272,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
             }
         });
-        mSurfaceRight = (SurfaceView)findViewById(R.id.surfaceViewRight);
-        mSurfaceLeft = (SurfaceView)findViewById(R.id.surfaceViewLeft);
-        mSurfaceHolderRight = mSurfaceRight.getHolder();
-        mSurfaceHolderLeft = mSurfaceLeft.getHolder();
-        mSurfaceHolderRight.addCallback(this);
-        mSurfaceHolderLeft.addCallback(this);
     }
 
     @Override
