@@ -75,6 +75,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     // 记录AccessToken是否有效
     private boolean isAccessTokenValid = false;
+    private boolean isGameStarted = false;
     private EZDeviceInfo mLeftDeviceInfo;
     private EZDeviceInfo mRightDeviceInfo;
     private SurfaceHolder mSurfaceHolderRight;
@@ -85,6 +86,19 @@ public class GamePlayActivity extends AppCompatActivity {
     boolean Forward(View v, MotionEvent event) {
         if(_onHoldButton != null && _onHoldButton != btnForward) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(!isGameStarted){
+                HttpManager.postClientOperate(new XHttpResponse() {
+                    @Override
+                    public void onResponse(String response) {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                }, "00000001", 1);
+                isGameStarted = true;
+            }
             btnForward.setBackgroundResource(R.drawable.control_forward_72_gray);
             _onHoldButton = btnForward;
             _isRightOpen = true;
@@ -119,9 +133,22 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     @OnTouch(R.id.btnBackup)
-    boolean Backup(View v, MotionEvent event) {
+    boolean Backward(View v, MotionEvent event) {
         if(_onHoldButton != null && _onHoldButton != btnBackup) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(!isGameStarted){
+                HttpManager.postClientOperate(new XHttpResponse() {
+                    @Override
+                    public void onResponse(String response) {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                }, "00000001", 1);
+                isGameStarted = true;
+            }
             btnBackup.setBackgroundResource(R.drawable.control_backward_72_gray);
             _onHoldButton = btnBackup;
             _isRightOpen = true;
@@ -158,6 +185,19 @@ public class GamePlayActivity extends AppCompatActivity {
     boolean Left(View v, MotionEvent event) {
         if(_onHoldButton != null && _onHoldButton != btnLeft) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(!isGameStarted){
+                HttpManager.postClientOperate(new XHttpResponse() {
+                    @Override
+                    public void onResponse(String response) {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                }, "00000001", 1);
+                isGameStarted = true;
+            }
             btnLeft.setBackgroundResource(R.drawable.control_left_72_gray);
             _onHoldButton = btnLeft;
             _isRightOpen = false;
@@ -194,6 +234,19 @@ public class GamePlayActivity extends AppCompatActivity {
     boolean Right(View v, MotionEvent event) {
         if(_onHoldButton != null && _onHoldButton != btnRight) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(!isGameStarted){
+                HttpManager.postClientOperate(new XHttpResponse() {
+                    @Override
+                    public void onResponse(String response) {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                }, "00000001", 1);
+                isGameStarted = true;
+            }
             btnRight.setBackgroundResource(R.drawable.control_right_72_gray);
             _onHoldButton = btnRight;
             _isRightOpen = false;
@@ -316,16 +369,6 @@ public class GamePlayActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_gameplay);
         ButterKnife.bind(this);
-        HttpManager.postClientOperate(new XHttpResponse() {
-            @Override
-            public void onResponse(String response) {
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        }, "00000001", 1);
         mainHandler = new MainHandler(this);
         mEZOpenSDK = MainApplication.getApplicationEZOpenSDK();
 
