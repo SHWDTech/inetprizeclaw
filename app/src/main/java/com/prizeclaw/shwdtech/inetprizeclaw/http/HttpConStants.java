@@ -8,5 +8,5 @@ public class HttpConStants {
 
     static String ControlCommand = "http://114.55.175.99:9630/api/Command";
 
-    static String ClientOperate = "http://114.55.174.99:6930/api/ClientOperate";
+    static String ClientOperate = "http://114.55.175.99:9630/api/MachineOperate";
 }

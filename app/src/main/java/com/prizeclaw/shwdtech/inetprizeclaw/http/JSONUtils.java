@@ -3,6 +3,7 @@ package com.prizeclaw.shwdtech.inetprizeclaw.http;
 import com.prizeclaw.shwdtech.inetprizeclaw.bean.AccessTokenBean;
 
 import com.google.gson.Gson;
+import com.prizeclaw.shwdtech.inetprizeclaw.bean.MachineOperateResultBean;
 
 /**
  * Created by bb on 16/9/12.
@@ -10,6 +11,7 @@ import com.google.gson.Gson;
 public class JSONUtils {
     /**
      * 解析一组monitoryPointBean
+     *
      * @param json
      * @return
      */
@@ -34,8 +36,11 @@ public class JSONUtils {
 
         return data;
     }*/
+    public static AccessTokenBean parseAccesstokenBean(String json) {
+        return new Gson().fromJson(json, AccessTokenBean.class);
+    }
 
-public static AccessTokenBean parseAccesstokenBean(String json){
-    return new Gson().fromJson(json, AccessTokenBean.class);
-}
+    public static MachineOperateResultBean parseMachineOperateReulst(String json){
+        return new Gson().fromJson(json, MachineOperateResultBean.class);
+    }
 }
