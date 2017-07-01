@@ -74,4 +74,34 @@ public class HttpManager {
             }
         });
     }
+
+    public static void postClientOperate(@NonNull final XHttpResponse response, String clientCode, Integer operate){
+        Log.d(TAG, "start post ClientOperate");
+        RequestParams requestParams = new RequestParams(HttpConStants.ClientOperate);
+        requestParams.addBodyParameter("clientCode", clientCode);
+        requestParams.addBodyParameter("operate", operate.toString());
+        x.http().post(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.d(TAG, "getUpdateData onSuccess -->" + result);
+                response.onResponse(result);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d(TAG, "getUpdateData onError  -->" + ex.toString());
+                response.onError(ex);
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
 }

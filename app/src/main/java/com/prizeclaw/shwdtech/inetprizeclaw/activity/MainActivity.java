@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     boolean Forward(View v, MotionEvent event) {
         if(_onHoldButton != null && _onHoldButton != btnForward) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            btnForward.setBackgroundResource(R.drawable.control_forward_72_gray);
             _onHoldButton = btnForward;
             _isRightOpen = true;
             ChangeSurfaceLayout(_isRightOpen);
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             }, "00000001", 0);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            btnForward.setBackgroundResource(R.drawable.control_forward_72);
             _onHoldButton = null;
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
     boolean Backup(View v, MotionEvent event) {
         if(_onHoldButton != null && _onHoldButton != btnBackup) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            btnBackup.setBackgroundResource(R.drawable.control_backward_72_gray);
             _onHoldButton = btnBackup;
             _isRightOpen = true;
             ChangeSurfaceLayout(_isRightOpen);
@@ -135,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             }, "00000001", 1);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            btnBackup.setBackgroundResource(R.drawable.control_backward_72);
             _onHoldButton = null;
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
@@ -154,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
     boolean Left(View v, MotionEvent event) {
         if(_onHoldButton != null && _onHoldButton != btnLeft) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            btnLeft.setBackgroundResource(R.drawable.control_left_72_gray);
             _onHoldButton = btnLeft;
             _isRightOpen = false;
             ChangeSurfaceLayout(_isRightOpen);
@@ -169,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
             }, "00000001", 2);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            btnLeft.setBackgroundResource(R.drawable.control_left_72);
             _onHoldButton = null;
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
@@ -188,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
     boolean Right(View v, MotionEvent event) {
         if(_onHoldButton != null && _onHoldButton != btnRight) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            btnRight.setBackgroundResource(R.drawable.control_right_72_gray);
             _onHoldButton = btnRight;
             _isRightOpen = false;
             ChangeSurfaceLayout(_isRightOpen);
@@ -203,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
             }, "00000001", 3);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            btnRight.setBackgroundResource(R.drawable.control_right_72);
             _onHoldButton = null;
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
@@ -222,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
     boolean Catch(View v, MotionEvent event) {
         if(_onHoldButton != null && _onHoldButton != btnCatch) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            btnCatch.setBackgroundResource(R.drawable.control_catch_72_gray);
             _onHoldButton = btnCatch;
             HttpManager.postControlCommand(new XHttpResponse() {
                 @Override
@@ -235,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
             }, "00000001", 4);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            btnCatch.setBackgroundResource(R.drawable.control_catch_72);
             _onHoldButton = null;
         }
         return true;

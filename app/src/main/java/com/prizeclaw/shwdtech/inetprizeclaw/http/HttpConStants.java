@@ -7,4 +7,6 @@ public class HttpConStants {
     static String OPENYSHost = "https://open.ys7.com/api/lapp/token/get";
 
     static String ControlCommand = "http://114.55.175.99:9630/api/Command";
+
+    static String ClientOperate = "http://114.55.174.99:6930/api/ClientOperate";
 }
