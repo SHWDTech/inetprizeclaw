@@ -1,6 +1,7 @@
 package com.prizeclaw.shwdtech.inetprizeclaw.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +48,8 @@ public class GamePlayActivity extends AppCompatActivity {
 
     private static final int LEFT_DEVICE_INFO = 1;
     private static final int RIGHT_DEVICE_INFO = 2;
+    private static final int GAME_OVER = 3;
+    private static final int GAME_OVER_EXECUTE = 4;
 
     private EZOpenSDK mEZOpenSDK;
     private EZPlayer ezPlayerRight;
@@ -72,15 +75,22 @@ public class GamePlayActivity extends AppCompatActivity {
     Button btnRight;
     @BindView(R.id.btnCatch)
     Button btnCatch;
+    @BindView(R.id.layoutControl)
+    LinearLayout layoutControl;
+    @BindView(R.id.layoutGameOver)
+    LinearLayout layoutGameOver;
 
     // 记录AccessToken是否有效
     private boolean isAccessTokenValid = false;
     private boolean isGameStarted = false;
+    private boolean isGameOver = false;
     private EZDeviceInfo mLeftDeviceInfo;
     private EZDeviceInfo mRightDeviceInfo;
     private SurfaceHolder mSurfaceHolderRight;
     private SurfaceHolder mSurfaceHolderLeft;
     private MainHandler mainHandler;
+    private GameOverHandler gameOverHandler;
+    private GameOverExecuteHandler gameOverExecuteHandler;
 
     @OnTouch(R.id.btnForward)
     boolean Forward(View v, MotionEvent event) {
@@ -124,7 +134,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnBackup)
     boolean Backward(View v, MotionEvent event) {
-        if (_onHoldButton != null && _onHoldButton != btnBackup) return true;
+        if (isGameOver || (_onHoldButton != null && _onHoldButton != btnBackup)) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (!isGameStarted) {
                 GameStart();
@@ -163,7 +173,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnLeft)
     boolean Left(View v, MotionEvent event) {
-        if (_onHoldButton != null && _onHoldButton != btnLeft) return true;
+        if (isGameOver || (_onHoldButton != null && _onHoldButton != btnLeft)) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (!isGameStarted) {
                 GameStart();
@@ -202,7 +212,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnRight)
     boolean Right(View v, MotionEvent event) {
-        if (_onHoldButton != null && _onHoldButton != btnRight) return true;
+        if (isGameOver || (_onHoldButton != null && _onHoldButton != btnRight)) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (!isGameStarted) {
                 GameStart();
@@ -241,7 +251,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnCatch)
     boolean Catch(View v, MotionEvent event) {
-        if (_onHoldButton != null && _onHoldButton != btnCatch) return true;
+        if (isGameOver || (_onHoldButton != null && _onHoldButton != btnCatch)) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             btnCatch.setBackgroundResource(R.drawable.control_catch_72_gray);
             _onHoldButton = btnCatch;
@@ -255,12 +265,29 @@ public class GamePlayActivity extends AppCompatActivity {
 
                 }
             }, "00000001", 4);
+            gameOverHandler.removeCallbacksAndMessages(null);
+            gameOverHandler.sendEmptyMessage(GAME_OVER);
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
             btnCatch.setBackgroundResource(R.drawable.control_catch_72);
             _onHoldButton = null;
         }
         return true;
+    }
+
+    @OnClick(R.id.btnRestart)
+    void Restart() {
+        Intent mainActivity = new Intent();
+        mainActivity.setClass(GamePlayActivity.this, MainActivity.class);
+        mainActivity.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(mainActivity);
+        finish();
+    }
+
+    @OnClick(R.id.btnExit)
+    void Exit() {
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
     }
 
     private void ChangeSurfaceLayout(boolean isRight) {
@@ -321,17 +348,7 @@ public class GamePlayActivity extends AppCompatActivity {
             }
         }, "00000001", 1);
         isGameStarted = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(15000);
-                    //在这里执行切换显示内容的操作。
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        gameOverHandler.sendEmptyMessageDelayed(GAME_OVER, 15000);
     }
 
     @Override
@@ -354,6 +371,8 @@ public class GamePlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gameplay);
         ButterKnife.bind(this);
         mainHandler = new MainHandler(this);
+        gameOverHandler = new GameOverHandler(this);
+        gameOverExecuteHandler = new GameOverExecuteHandler(this);
         mEZOpenSDK = MainApplication.getApplicationEZOpenSDK();
 
         mSurfaceLeft.getHolder().addCallback(mLeftCallback);
@@ -374,6 +393,8 @@ public class GamePlayActivity extends AppCompatActivity {
         super.onDestroy();
         mainHandler.removeCallbacksAndMessages(null);
         mainHandler = null;
+        gameOverHandler.removeCallbacksAndMessages(null);
+        gameOverHandler = null;
     }
 
     /**
@@ -518,16 +539,53 @@ public class GamePlayActivity extends AppCompatActivity {
 
     }
 
-    static class MainHandler extends Handler {
-        private final WeakReference<GamePlayActivity> mainActivityWeakReference;
+    @MainThread
+    private void setGameOver() {
+        btnBackup.setClickable(false);
+        btnForward.setClickable(false);
+        btnLeft.setClickable(false);
+        btnRight.setClickable(false);
+        btnCatch.setClickable(false);
+        gameOverExecuteHandler.sendEmptyMessageDelayed(GAME_OVER_EXECUTE, 10000);
+    }
 
-        public MainHandler(GamePlayActivity activity) {
-            mainActivityWeakReference = new WeakReference<>(activity);
+    @MainThread
+    private void executeGameOver() {
+        isGameOver = true;
+        layoutControl.setVisibility(View.GONE);
+        layoutGameOver.setVisibility(View.VISIBLE);
+    }
+
+    static class GameOverExecuteHandler extends Handler {
+        private final WeakReference<GamePlayActivity> gamePlayActivityWeakReference;
+
+        public GameOverExecuteHandler(GamePlayActivity activity) {
+            gamePlayActivityWeakReference = new WeakReference<GamePlayActivity>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            GamePlayActivity activity = mainActivityWeakReference.get();
+            GamePlayActivity activity = gamePlayActivityWeakReference.get();
+            if (activity == null) {
+                return;
+            }
+            switch (msg.what) {
+                case GAME_OVER_EXECUTE:
+                    activity.executeGameOver();
+            }
+        }
+    }
+
+    static class MainHandler extends Handler {
+        private final WeakReference<GamePlayActivity> gamePlayActivityWeakReference;
+
+        public MainHandler(GamePlayActivity activity) {
+            gamePlayActivityWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            GamePlayActivity activity = gamePlayActivityWeakReference.get();
             if (activity == null) {
                 return;
             }
@@ -537,6 +595,27 @@ public class GamePlayActivity extends AppCompatActivity {
                     break;
                 case RIGHT_DEVICE_INFO:
                     activity.bindRightDeviceToSurfaceView();
+                    break;
+            }
+        }
+    }
+
+    static class GameOverHandler extends Handler {
+        private final WeakReference<GamePlayActivity> gamePlayActivityWeakReference;
+
+        public GameOverHandler(GamePlayActivity activity) {
+            gamePlayActivityWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            GamePlayActivity activity = gamePlayActivityWeakReference.get();
+            if (activity == null) {
+                return;
+            }
+            switch (msg.what) {
+                case GAME_OVER:
+                    activity.setGameOver();
                     break;
             }
         }
