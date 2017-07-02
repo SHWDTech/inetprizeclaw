@@ -324,7 +324,12 @@ public class GamePlayActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-            //在这里执行切换显示内容的操作。
+                try {
+                    Thread.sleep(15000);
+                    //在这里执行切换显示内容的操作。
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }
