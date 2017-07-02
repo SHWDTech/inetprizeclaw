@@ -3,6 +3,8 @@ package com.prizeclaw.shwdtech.inetprizeclaw.activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,11 +16,37 @@ import com.prizeclaw.shwdtech.inetprizeclaw.http.HttpManager;
 import com.prizeclaw.shwdtech.inetprizeclaw.http.JSONUtils;
 import com.prizeclaw.shwdtech.inetprizeclaw.http.XHttpResponse;
 
+import java.lang.ref.WeakReference;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
+    private volatile boolean isRequesting = false;
+    private Handler mHandler;
+    private static final int GET_COINSTATUS = 1;
+    static class MainHandler extends Handler {
+        final WeakReference<MainActivity> reference;
+
+        public MainHandler(MainActivity activity) {
+            reference = new WeakReference<MainActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            MainActivity activity = reference.get();
+            if(activity == null) {
+                return;
+            }
+            switch (msg.what) {
+                case GET_COINSTATUS:
+                    activity.getCoinStatus();
+                    break;
+            }
+        }
+    }
+
     @BindView(R.id.btnCoinIn)
     Button btnCoinIn;
 
@@ -36,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }, "00000001", 6);
         btnCoinIn.setText("准备中...");
+        btnCoinIn.setClickable(false);
     }
 
     @Override
@@ -57,37 +86,38 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        mHandler = new MainHandler(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     private void getCoinStatus() {
+        if (isRequesting) return;
+        isRequesting = true;
         HttpManager.postClientOperate(new XHttpResponse() {
             @Override
             public void onResponse(String response) {
+                isRequesting = false;
                 MachineOperateResultBean machineOperateResult = JSONUtils.parseMachineOperateReulst(response);
                 if (!machineOperateResult.getIsOperateResultOk()) {
-                    try {
-                        Thread.sleep(500);
-                        getCoinStatus();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent gameActivity = new Intent();
-                            gameActivity.setClass(MainActivity.this, GamePlayActivity.class);
-                            gameActivity.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                            startActivity(gameActivity);
-                            finish();
-                        }
-                    });
+                    mHandler.sendEmptyMessageDelayed(GET_COINSTATUS, 1000);
+                } else {
+                    Intent gameActivity = new Intent();
+                    gameActivity.setClass(MainActivity.this, GamePlayActivity.class);
+                    gameActivity.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(gameActivity);
+                    finish();
                 }
             }
 
             @Override
             public void onError(Throwable e) {
-
+                isRequesting = false;
+                // TODO 出错了你怎么办
             }
         }, "00000001", 0);
     }
