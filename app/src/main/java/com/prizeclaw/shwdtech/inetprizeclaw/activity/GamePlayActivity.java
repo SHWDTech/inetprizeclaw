@@ -84,20 +84,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnForward)
     boolean Forward(View v, MotionEvent event) {
-        if(_onHoldButton != null && _onHoldButton != btnForward) return true;
+        if (_onHoldButton != null && _onHoldButton != btnForward) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if(!isGameStarted){
-                HttpManager.postClientOperate(new XHttpResponse() {
-                    @Override
-                    public void onResponse(String response) {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                }, "00000001", 1);
-                isGameStarted = true;
+            if (!isGameStarted) {
+                GameStart();
             }
             btnForward.setBackgroundResource(R.drawable.control_forward_72_gray);
             _onHoldButton = btnForward;
@@ -134,20 +124,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnBackup)
     boolean Backward(View v, MotionEvent event) {
-        if(_onHoldButton != null && _onHoldButton != btnBackup) return true;
+        if (_onHoldButton != null && _onHoldButton != btnBackup) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if(!isGameStarted){
-                HttpManager.postClientOperate(new XHttpResponse() {
-                    @Override
-                    public void onResponse(String response) {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                }, "00000001", 1);
-                isGameStarted = true;
+            if (!isGameStarted) {
+                GameStart();
             }
             btnBackup.setBackgroundResource(R.drawable.control_backward_72_gray);
             _onHoldButton = btnBackup;
@@ -183,20 +163,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnLeft)
     boolean Left(View v, MotionEvent event) {
-        if(_onHoldButton != null && _onHoldButton != btnLeft) return true;
+        if (_onHoldButton != null && _onHoldButton != btnLeft) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if(!isGameStarted){
-                HttpManager.postClientOperate(new XHttpResponse() {
-                    @Override
-                    public void onResponse(String response) {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                }, "00000001", 1);
-                isGameStarted = true;
+            if (!isGameStarted) {
+                GameStart();
             }
             btnLeft.setBackgroundResource(R.drawable.control_left_72_gray);
             _onHoldButton = btnLeft;
@@ -232,20 +202,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnRight)
     boolean Right(View v, MotionEvent event) {
-        if(_onHoldButton != null && _onHoldButton != btnRight) return true;
+        if (_onHoldButton != null && _onHoldButton != btnRight) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if(!isGameStarted){
-                HttpManager.postClientOperate(new XHttpResponse() {
-                    @Override
-                    public void onResponse(String response) {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                }, "00000001", 1);
-                isGameStarted = true;
+            if (!isGameStarted) {
+                GameStart();
             }
             btnRight.setBackgroundResource(R.drawable.control_right_72_gray);
             _onHoldButton = btnRight;
@@ -281,7 +241,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnCatch)
     boolean Catch(View v, MotionEvent event) {
-        if(_onHoldButton != null && _onHoldButton != btnCatch) return true;
+        if (_onHoldButton != null && _onHoldButton != btnCatch) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             btnCatch.setBackgroundResource(R.drawable.control_catch_72_gray);
             _onHoldButton = btnCatch;
@@ -349,6 +309,25 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     };
 
+    private void GameStart() {
+        HttpManager.postClientOperate(new XHttpResponse() {
+            @Override
+            public void onResponse(String response) {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        }, "00000001", 1);
+        isGameStarted = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+            //在这里执行切换显示内容的操作。
+            }
+        }).start();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -397,7 +376,7 @@ public class GamePlayActivity extends AppCompatActivity {
      *
      * @return 是否有效
      */
-    private boolean  checkLocalAccessTokenValid() {
+    private boolean checkLocalAccessTokenValid() {
         SharedPreferences sp = getSharedPreferences(ACCESS_TOKEN_SP, Context.MODE_PRIVATE);
         String tokenExpireDate = sp.getString(TOKEN_EXPIRE_DATE_KEY, "2000-01-01 00:00:00 000");
         SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz");
@@ -450,20 +429,20 @@ public class GamePlayActivity extends AppCompatActivity {
      */
     private void fetchLeftDeviceInfo() {
         new Thread(new Runnable() {
-        @Override
-        public void run() {
-            try {
-                mLeftDeviceInfo = mEZOpenSDK.getDeviceInfo("779567543");
-                if (mainHandler != null) {
-                    mainHandler.sendEmptyMessage(LEFT_DEVICE_INFO);
+            @Override
+            public void run() {
+                try {
+                    mLeftDeviceInfo = mEZOpenSDK.getDeviceInfo("779567543");
+                    if (mainHandler != null) {
+                        mainHandler.sendEmptyMessage(LEFT_DEVICE_INFO);
+                    }
+                    Log.d(TAG, "fetchLeftDeviceInfo success");
+                } catch (BaseException e) {
+                    Log.d(TAG, "fetchLeftDeviceInfo failed");
                 }
-                Log.d(TAG, "fetchLeftDeviceInfo success");
-            } catch (BaseException e) {
-                Log.d(TAG, "fetchLeftDeviceInfo failed");
             }
-        }
-    }).start();
-}
+        }).start();
+    }
 
     /**
      * 获取右摄像头Info
