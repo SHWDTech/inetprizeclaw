@@ -96,6 +96,7 @@ public class GamePlayActivity extends AppCompatActivity {
     boolean Forward(View v, MotionEvent event) {
         if (_onHoldButton != null && _onHoldButton != btnForward) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(isGameOver) return true;
             if (!isGameStarted) {
                 GameStart();
             }
@@ -134,8 +135,9 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnBackup)
     boolean Backward(View v, MotionEvent event) {
-        if (isGameOver || (_onHoldButton != null && _onHoldButton != btnBackup)) return true;
+        if (_onHoldButton != null && _onHoldButton != btnBackup) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(isGameOver) return true;
             if (!isGameStarted) {
                 GameStart();
             }
@@ -173,8 +175,9 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnLeft)
     boolean Left(View v, MotionEvent event) {
-        if (isGameOver || (_onHoldButton != null && _onHoldButton != btnLeft)) return true;
+        if (_onHoldButton != null && _onHoldButton != btnLeft) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(isGameOver) return true;
             if (!isGameStarted) {
                 GameStart();
             }
@@ -212,8 +215,9 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnRight)
     boolean Right(View v, MotionEvent event) {
-        if (isGameOver || (_onHoldButton != null && _onHoldButton != btnRight)) return true;
+        if (_onHoldButton != null && _onHoldButton != btnRight) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(isGameOver) return true;
             if (!isGameStarted) {
                 GameStart();
             }
@@ -251,8 +255,9 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @OnTouch(R.id.btnCatch)
     boolean Catch(View v, MotionEvent event) {
-        if (isGameOver || (_onHoldButton != null && _onHoldButton != btnCatch)) return true;
+        if (_onHoldButton != null && _onHoldButton != btnCatch) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(isGameOver) return true;
             btnCatch.setBackgroundResource(R.drawable.control_catch_72_gray);
             _onHoldButton = btnCatch;
             HttpManager.postControlCommand(new XHttpResponse() {
@@ -541,17 +546,12 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @MainThread
     private void setGameOver() {
-        btnBackup.setClickable(false);
-        btnForward.setClickable(false);
-        btnLeft.setClickable(false);
-        btnRight.setClickable(false);
-        btnCatch.setClickable(false);
+        isGameOver = true;
         gameOverExecuteHandler.sendEmptyMessageDelayed(GAME_OVER_EXECUTE, 10000);
     }
 
     @MainThread
     private void executeGameOver() {
-        isGameOver = true;
         layoutControl.setVisibility(View.GONE);
         layoutGameOver.setVisibility(View.VISIBLE);
     }
