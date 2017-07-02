@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.MainThread;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.prizeclaw.shwdtech.inetprizeclaw.R;
 import com.prizeclaw.shwdtech.inetprizeclaw.application.MainApplication;
@@ -60,6 +62,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     private boolean _isRightOpen = false;
     private Button _onHoldButton;
+    private CountDownTimer _countDownTimer;
 
     @BindView(R.id.surfaceViewLeft)
     SurfaceView mSurfaceLeft;
@@ -75,6 +78,10 @@ public class GamePlayActivity extends AppCompatActivity {
     Button btnRight;
     @BindView(R.id.btnCatch)
     Button btnCatch;
+    @BindView(R.id.txtDownCount)
+    TextView txtDownCount;
+    @BindView(R.id.txtDownCountName)
+    TextView txtDownCountName;
     @BindView(R.id.layoutControl)
     LinearLayout layoutControl;
     @BindView(R.id.layoutGameOver)
@@ -354,6 +361,17 @@ public class GamePlayActivity extends AppCompatActivity {
         }, "00000001", 1);
         isGameStarted = true;
         gameOverHandler.sendEmptyMessageDelayed(GAME_OVER, 15000);
+        _countDownTimer = new CountDownTimer(15000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                txtDownCount.setText(millisUntilFinished / 1000 + "秒");
+            }
+
+            public void onFinish() {
+                txtDownCount.setText("done!");
+            }
+        };
+        _countDownTimer.start();
     }
 
     @Override
@@ -548,6 +566,18 @@ public class GamePlayActivity extends AppCompatActivity {
     private void setGameOver() {
         isGameOver = true;
         gameOverExecuteHandler.sendEmptyMessageDelayed(GAME_OVER_EXECUTE, 10000);
+        txtDownCountName.setText("游戏结束倒计时：");
+        _countDownTimer.cancel();
+        _countDownTimer = new CountDownTimer(10000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                txtDownCount.setText(millisUntilFinished / 1000  + "秒");
+            }
+
+            public void onFinish() {
+                txtDownCount.setText("-");
+            }
+        }.start();
     }
 
     @MainThread
