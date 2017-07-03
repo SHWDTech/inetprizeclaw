@@ -17,12 +17,14 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.prizeclaw.shwdtech.inetprizeclaw.R;
 import com.prizeclaw.shwdtech.inetprizeclaw.application.MainApplication;
 import com.prizeclaw.shwdtech.inetprizeclaw.bean.AccessTokenBean;
+import com.prizeclaw.shwdtech.inetprizeclaw.bean.MachineOperateResultBean;
 import com.prizeclaw.shwdtech.inetprizeclaw.http.HttpManager;
 import com.prizeclaw.shwdtech.inetprizeclaw.http.JSONUtils;
 import com.prizeclaw.shwdtech.inetprizeclaw.http.XHttpResponse;
@@ -61,6 +63,7 @@ public class GamePlayActivity extends AppCompatActivity {
     private LinearLayout.LayoutParams mFillLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
     private boolean _isRightOpen = false;
+    private boolean _isCatchSuccessed = false;
     private Button _onHoldButton;
     private CountDownTimer _countDownTimer;
 
@@ -82,6 +85,10 @@ public class GamePlayActivity extends AppCompatActivity {
     TextView txtDownCount;
     @BindView(R.id.txtDownCountName)
     TextView txtDownCountName;
+    @BindView(R.id.txtCatchResult)
+    TextView txtCatchResult;
+    @BindView(R.id.imgViewCatchResult)
+    ImageView imgViewCatchResult;
     @BindView(R.id.layoutControl)
     LinearLayout layoutControl;
     @BindView(R.id.layoutGameOver)
@@ -572,6 +579,24 @@ public class GamePlayActivity extends AppCompatActivity {
 
             public void onTick(long millisUntilFinished) {
                 txtDownCount.setText(millisUntilFinished / 1000  + "秒");
+                if(!_isCatchSuccessed){
+                    HttpManager.postClientOperate(new XHttpResponse() {
+                        @Override
+                        public void onResponse(String response) {
+                            MachineOperateResultBean machineOperateResult = JSONUtils.parseMachineOperateReulst(response);
+                            if(machineOperateResult.getIsOperateResultOk()){
+                                _isCatchSuccessed = true;
+                                imgViewCatchResult.setBackgroundResource(R.drawable.catch_success_72);
+                                txtCatchResult.setText("抓到了，恭喜你！");
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+                    }, "00000001", 2);
+                }
             }
 
             public void onFinish() {

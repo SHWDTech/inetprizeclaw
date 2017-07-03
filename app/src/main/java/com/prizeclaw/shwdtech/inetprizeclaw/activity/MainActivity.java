@@ -63,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }, "00000001", 6);
-        btnCoinIn.setText("准备中...");
-        btnCoinIn.setClickable(false);
     }
 
     @Override
