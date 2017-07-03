@@ -574,7 +574,9 @@ public class GamePlayActivity extends AppCompatActivity {
         isGameOver = true;
         gameOverExecuteHandler.sendEmptyMessageDelayed(GAME_OVER_EXECUTE, 10000);
         txtDownCountName.setText("游戏结束倒计时：");
-        _countDownTimer.cancel();
+        if(_countDownTimer != null){
+            _countDownTimer.cancel();
+        }
         _countDownTimer = new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
