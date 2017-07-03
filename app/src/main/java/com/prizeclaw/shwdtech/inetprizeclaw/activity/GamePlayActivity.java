@@ -367,8 +367,8 @@ public class GamePlayActivity extends AppCompatActivity {
             }
         }, "00000001", 1);
         isGameStarted = true;
-        gameOverHandler.sendEmptyMessageDelayed(GAME_OVER, 15000);
-        _countDownTimer = new CountDownTimer(15000, 1000) {
+        gameOverHandler.sendEmptyMessageDelayed(GAME_OVER, 30000);
+        _countDownTimer = new CountDownTimer(30000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 txtDownCount.setText(millisUntilFinished / 1000 + "秒");
