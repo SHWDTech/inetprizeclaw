@@ -1,5 +1,6 @@
 package com.prizeclaw.shwdtech.inetprizeclaw.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.prizeclaw.shwdtech.inetprizeclaw.R;
 import com.prizeclaw.shwdtech.inetprizeclaw.bean.MachineOperateResultBean;
@@ -101,6 +103,14 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 isRequesting = false;
                 MachineOperateResultBean machineOperateResult = JSONUtils.parseMachineOperateReulst(response);
+                if(!machineOperateResult.getIsOperateSuccess()){
+                    Context context = getApplicationContext();
+                    CharSequence text = machineOperateResult.getOperateMessage();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                    return;
+                }
                 if (!machineOperateResult.getIsOperateResultOk()) {
                     mHandler.sendEmptyMessageDelayed(GET_COINSTATUS, 1000);
                 } else {
