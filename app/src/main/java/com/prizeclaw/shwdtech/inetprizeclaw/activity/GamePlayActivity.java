@@ -3,6 +3,9 @@ package com.prizeclaw.shwdtech.inetprizeclaw.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -323,6 +326,7 @@ public class GamePlayActivity extends AppCompatActivity {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             mSurfaceHolderLeft = holder;
+            tryDrawing(mSurfaceHolderLeft);
             bindLeftDeviceToSurfaceView();
         }
 
@@ -341,6 +345,7 @@ public class GamePlayActivity extends AppCompatActivity {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             mSurfaceHolderRight = holder;
+            tryDrawing(mSurfaceHolderRight);
             bindRightDeviceToSurfaceView();
         }
 
@@ -567,6 +572,15 @@ public class GamePlayActivity extends AppCompatActivity {
         Boolean ret = ezPlayerRight.startRealPlay();
         Log.d(TAG, "bindRightDeviceToSurfaceView ret == " + ret);
 
+    }
+
+    private void tryDrawing(SurfaceHolder holder){
+        Canvas canvas = holder.lockCanvas();
+        if(canvas == null) return;
+        Paint p = new Paint();
+        p.setColor(Color.RED);
+        canvas.drawLine(20 ,0, 50, 400, new Paint());
+        holder.unlockCanvasAndPost(canvas);
     }
 
     @MainThread
